@@ -3,9 +3,23 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
-
+#include <shader_binding.hpp>
+struct VBInt {
+    GLuint vbo;
+    GLuint vao;
+    GLuint program;
+};
 SDL_Window* window;
 SDL_GLContext glContext;
+float vertices[][2] = {
+        {-1.0f, -1.0f},
+        {1.0f, -1.0f},
+        {1.0f, 1.0f},
+        {-1.0f, 1.0f},
+        {-1.0f, -1.0f}, // Repeat last vertex to close the shape
+        {1.0f, 1.0f}
+    };
+
 void getFPS(){
     const int DESIRED_FPS = 60;
     const int FRAME_DELAY = 1000 / DESIRED_FPS;
@@ -65,22 +79,60 @@ void setupOpenGL() {
     glViewport(0, 0, 800, 600);
 }
 
-void render() {
+void render(VBInt vb) {
     // Clear the screen
     glad_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render OpenGL content here
-
+    glad_glUseProgram(vb.program);
+    glad_glBindVertexArray(vb.vao);
+    glad_glDrawArrays(GL_TRIANGLES, 0, 3);
+    glad_glBindVertexArray(0);
+    glad_glUseProgram(0);
     // Swap buffers
     SDL_GL_SwapWindow(window);
 }
-
+int arrSize(float arr[][2], int rows) {
+    // Divide the total size of the array by the size of one row
+    return rows;
+}
+VBInt initVBData() {
+    // Create a vertex buffer object
+    GLuint vbo;
+    glad_glGenBuffers(1, &vbo);
+    glad_glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glad_glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // Create a vertex array object
+    GLuint vao;
+    glad_glGenVertexArrays(1, &vao);
+    glad_glBindVertexArray(vao);
+    glad_glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, arrSize(vertices, 6) * sizeof(float), (void*)0);
+    glad_glEnableVertexAttribArray(0);
+    glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glad_glBindVertexArray(0);
+    // Create a shader program
+    GLuint program;
+    program = glad_glCreateProgram();
+    glad_glAttachShader(program, loadBinShader("shaders/default.vert.spv", GL_VERTEX_SHADER));
+    glad_glAttachShader(program, loadBinShader("shaders/default.frag.spv", GL_FRAGMENT_SHADER));
+    glad_glLinkProgram(program);
+    VBInt vb;
+    vb.vbo = vbo;
+    vb.vao = vao;
+    vb.program = program;
+    return vb;
+}
 int main(int argc, char* argv[]) {
     setupSDL();
     setupOpenGL();
 
     // Main loop
     glad_glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    VBInt vb = initVBData();
+    
+    
     bool quit = false;
     while (!quit) {
         SDL_Event event;
@@ -90,8 +142,11 @@ int main(int argc, char* argv[]) {
             }
         }
         getFPS();
-        render();
+        render(vb);
     }
+    glad_glDeleteBuffers(1, &vb.vbo);
+    glad_glDeleteVertexArrays(1, &vb.vao);
+    glad_glDeleteProgram(vb.program);
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(window);

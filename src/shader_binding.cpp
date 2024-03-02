@@ -1,16 +1,35 @@
 #include <shader_binding.hpp>
-#include <filesystem>
 #include <vector>
 #include <fstream>
-GLuint loadBinShader(const char* filePath, GLenum shaderType){
-    // Load binary shader file into memory (You can use your own file loading mechanism)
-    std::ifstream file(filePath, std::ios::binary);
-    std::vector<char> shaderData((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    
-    // Load binary shader into OpenGL
-    GLuint shaderID = glCreateShader(shaderType);
-    glShaderBinary(1, &shaderID, GL_SHADER_BINARY_FORMAT_SPIR_V, shaderData.data(), shaderData.size());
-    glSpecializeShader(shaderID, "main", 0, nullptr, nullptr);
+#include <sstream>
 
-    return shaderID;
+GLuint compileShader(GLenum shaderType, const char* shaderSource) {
+    GLuint shader = glCreateShader(shaderType);
+    glad_glShaderSource(shader, 1, &shaderSource, NULL);
+    glad_glCompileShader(shader);
+
+    // Check for compilation errors
+    GLint success;
+    glad_glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+    return shader;
+}
+
+GLuint loadShaderFromFile(const char* filePath, GLenum shaderType) {
+    // Read shader source code from file
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        printf("Failed to open file: %s\n", filePath);
+        return 0;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string shaderSource = buffer.str();
+
+    return compileShader(shaderType, shaderSource.c_str());
+}
+
+GLuint loadBinShader(const char* filePath, GLenum shaderType) {
+    return loadShaderFromFile(filePath, shaderType);
 }
