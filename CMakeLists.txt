@@ -7,18 +7,13 @@ set(SHADER_FILES
 )
 
 # Add a custom command to compile all shaders at once
-
 add_subdirectory(extern/sdl)
-set(SDL_SHARED OFF)
+
 
 add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL-static)
-if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-  set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
-else()
-  set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
-endif()
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared)
+
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
     "src/shaders/*.frag"
@@ -31,7 +26,7 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
   add_custom_command(
     OUTPUT ${SPIRV}
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/"
-    COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
+    COMMAND glslangValidator -V ${GLSL} -o ${SPIRV}
     DEPENDS ${GLSL})
   list(APPEND SPIRV_BINARY_FILES ${SPIRV})
 endforeach(GLSL)
@@ -41,7 +36,7 @@ add_custom_target(
     DEPENDS ${SPIRV_BINARY_FILES}
     )
 
-add_dependencies(${CMAKE_PROJECT_NAME} Shaders)
+add_dependencies(${CMAKE_PROJECT_NAME} Shaders SDL3::SDL3-shared)
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/shaders/"
@@ -49,3 +44,4 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
         "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders"
         "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/shaders"
         )
+

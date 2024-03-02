@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.css": "css",
+        ".postcssrc": "json",
+        "*.cppm": "objective-cpp",
+        "cstdint": "cpp"
+    }
+}
