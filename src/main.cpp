@@ -4,11 +4,11 @@
 #include <cstdlib>
 #include <cstdint>
 #include <shader_binding.hpp>
-struct VBInt {
+typedef struct {
     GLuint vbo;
     GLuint vao;
     GLuint program;
-};
+} VBInt;
 SDL_Window* window;
 SDL_GLContext glContext;
 float vertices[][2] = {
