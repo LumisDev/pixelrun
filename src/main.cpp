@@ -115,8 +115,8 @@ VBInt initVBData() {
     // Create a shader program
     GLuint program;
     program = glad_glCreateProgram();
-    glad_glAttachShader(program, loadBinShader("shaders/default.vert.spv", GL_VERTEX_SHADER));
-    glad_glAttachShader(program, loadBinShader("shaders/default.frag.spv", GL_FRAGMENT_SHADER));
+    glad_glAttachShader(program, loadBinShader("shaders/default.vert", GL_VERTEX_SHADER));
+    glad_glAttachShader(program, loadBinShader("shaders/default.frag", GL_FRAGMENT_SHADER));
     glad_glLinkProgram(program);
     VBInt vb;
     vb.vbo = vbo;
