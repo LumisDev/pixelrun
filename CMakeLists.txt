@@ -5,8 +5,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 # Add a custom command to compile all shaders at once
 add_subdirectory(extern/sdl)
 add_subdirectory(extern/box2d)
-set(BOX2D_BUILD_TESTBED OFF)
-set(BOX2D_BUILD_UNIT_TESTS OFF)
+
 
 add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c src/shader_binding.cpp)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include)
