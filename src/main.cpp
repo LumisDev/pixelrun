@@ -129,11 +129,7 @@ VBInt initVBData() {
 int main(int argc, char* argv[]) {
     setupSDL();
     setupOpenGL();
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-    std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "Extensions: " << glGetString(GL_EXTENSIONS) << std::endl;
+
     // Main loop
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     VBInt vb = initVBData();
