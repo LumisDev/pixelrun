@@ -3,24 +3,29 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdint>
-#include <shader_binding.hpp>
+
+// Load binary shader function declaration
+GLuint loadBinShader(const char* filename, GLenum shaderType);
+
 typedef struct {
     GLuint vbo;
     GLuint vao;
     GLuint program;
 } VBInt;
+
 SDL_Window* window;
 SDL_GLContext glContext;
-float vertices[] = {
-        -1.0f, -1.0f,
-        1.0f, -1.0f,
-        1.0f, 1.0f,
-        -1.0f, 1.0f,
-        -1.0f, -1.0f, // Repeat last vertex to close the shape
-        1.0f, 1.0f
-    };
 
-void getFPS(){
+float vertices[] = {
+    -1.0f, -1.0f,
+    1.0f, -1.0f,
+    1.0f, 1.0f,
+    -1.0f, 1.0f,
+    -1.0f, -1.0f, // Repeat last vertex to close the shape
+    1.0f, 1.0f
+};
+
+void getFPS() {
     const int DESIRED_FPS = 60;
     const int FRAME_DELAY = 1000 / DESIRED_FPS;
 
@@ -31,8 +36,8 @@ void getFPS(){
     if (frameTime < FRAME_DELAY) {
         SDL_Delay(FRAME_DELAY - frameTime);
     }
-
 }
+
 void setupSDL() {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
@@ -41,17 +46,15 @@ void setupSDL() {
     }
 
     // Set OpenGL version to 4.1
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-
     // Create SDL window
-    window = SDL_CreateWindow("SDL OpenGL Example", 800, 600, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("PixelRun", 800, 600, SDL_WINDOW_OPENGL);
     if (!window) {
         std::cerr << "Failed to create SDL window: " << SDL_GetError() << std::endl;
         exit(EXIT_FAILURE);
@@ -71,9 +74,6 @@ void setupOpenGL() {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         exit(EXIT_FAILURE);
     }
-    SDL_GL_MakeCurrent(window, glContext);
-    SDL_GL_SetSwapInterval(1); // 1 for Vsync on, 0 for Vsync off
-
 
     // Set up OpenGL viewport
     glViewport(0, 0, 800, 600);
@@ -81,14 +81,15 @@ void setupOpenGL() {
 
 void render(VBInt vb) {
     // Clear the screen
-    glad_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render OpenGL content here
-    glad_glUseProgram(vb.program);
-    glad_glBindVertexArray(vb.vao);
-    glad_glDrawArrays(GL_TRIANGLES, 0, 3);
-    glad_glBindVertexArray(0);
-    glad_glUseProgram(0);
+    glUseProgram(vb.program);
+    glBindVertexArray(vb.vao);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / (sizeof(float) * 2)); // Changed size calculation
+    glBindVertexArray(0);
+    glUseProgram(0);
+
     // Swap buffers
     SDL_GL_SwapWindow(window);
 }
@@ -96,54 +97,59 @@ void render(VBInt vb) {
 VBInt initVBData() {
     // Create a vertex buffer object
     GLuint vbo;
-    glad_glGenBuffers(1, &vbo);
-    glad_glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glad_glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     // Create a vertex array object
     GLuint vao;
-    glad_glGenVertexArrays(1, &vao);
-    glad_glBindVertexArray(vao);
-    glad_glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (void*)0);
-    glad_glEnableVertexAttribArray(0);
-    glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glad_glBindVertexArray(0);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Corrected vertex attribute size
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     // Create a shader program
     GLuint program;
-    program = glad_glCreateProgram();
-    glad_glAttachShader(program, loadBinShader("shaders/default.vert", GL_VERTEX_SHADER));
-    glad_glAttachShader(program, loadBinShader("shaders/default.frag", GL_FRAGMENT_SHADER));
-    glad_glLinkProgram(program);
+    program = glCreateProgram();
+    glAttachShader(program, loadBinShader("shaders/default.vert", GL_VERTEX_SHADER));
+    glAttachShader(program, loadBinShader("shaders/default.frag", GL_FRAGMENT_SHADER));
+    glLinkProgram(program);
+
     VBInt vb;
     vb.vbo = vbo;
     vb.vao = vao;
     vb.program = program;
     return vb;
 }
+
 int main(int argc, char* argv[]) {
     setupSDL();
     setupOpenGL();
 
     // Main loop
-    glad_glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     VBInt vb = initVBData();
-    
-    
+
     bool quit = false;
     while (!quit) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) { // Corrected event type check
+            if (event.type == SDL_EVENT_QUIT) { // Corrected event type name
                 quit = true;
             }
         }
         getFPS();
         render(vb);
     }
-    glad_glDeleteBuffers(1, &vb.vbo);
-    glad_glDeleteVertexArrays(1, &vb.vao);
-    glad_glDeleteProgram(vb.program);
+
+    // Cleanup
+    glDeleteBuffers(1, &vb.vbo);
+    glDeleteVertexArrays(1, &vb.vao);
+    glDeleteProgram(vb.program);
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(window);
