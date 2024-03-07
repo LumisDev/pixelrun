@@ -11,13 +11,13 @@ typedef struct {
 } VBInt;
 SDL_Window* window;
 SDL_GLContext glContext;
-float vertices[][2] = {
-        {-1.0f, -1.0f},
-        {1.0f, -1.0f},
-        {1.0f, 1.0f},
-        {-1.0f, 1.0f},
-        {-1.0f, -1.0f}, // Repeat last vertex to close the shape
-        {1.0f, 1.0f}
+float vertices[] = {
+        -1.0f, -1.0f,
+        1.0f, -1.0f,
+        1.0f, 1.0f,
+        -1.0f, 1.0f,
+        -1.0f, -1.0f, // Repeat last vertex to close the shape
+        1.0f, 1.0f
     };
 
 void getFPS(){
@@ -92,10 +92,7 @@ void render(VBInt vb) {
     // Swap buffers
     SDL_GL_SwapWindow(window);
 }
-int arrSize(float arr[][2], int rows) {
-    // Divide the total size of the array by the size of one row
-    return rows;
-}
+
 VBInt initVBData() {
     // Create a vertex buffer object
     GLuint vbo;
@@ -108,7 +105,7 @@ VBInt initVBData() {
     glad_glGenVertexArrays(1, &vao);
     glad_glBindVertexArray(vao);
     glad_glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, arrSize(vertices, 6) * sizeof(float), (void*)0);
+    glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float), (void*)0);
     glad_glEnableVertexAttribArray(0);
     glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
     glad_glBindVertexArray(0);
