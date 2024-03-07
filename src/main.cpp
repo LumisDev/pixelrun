@@ -129,7 +129,7 @@ VBInt initVBData() {
 int main(int argc, char* argv[]) {
     setupSDL();
     setupOpenGL();
-    std::cout << "Made with OpenGL v." << glGetString(GL_VERSION) << " and SDL version " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << std::endl;
+    std::cout << "Made with OpenGL v." << glGetString(GL_VERSION) << " and SDL version " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << "." << std::endl << "Shaded with shaders made with GLSL v." << glGetString(GL_SHADING_LANGUAGE_VERSION)  << std::endl;
     // Main loop
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     VBInt vb = initVBData();
