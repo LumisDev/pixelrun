@@ -8,8 +8,8 @@ add_subdirectory(extern/box2d)
 
 
 add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c src/shader_binding.cpp)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include extern/box2d/include)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared box2d)
 
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
