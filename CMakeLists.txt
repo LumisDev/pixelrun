@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 project(PixelRun)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 # Add a custom command to compile all shaders at once
 add_subdirectory(extern/sdl)
