@@ -32,7 +32,7 @@ add_custom_target(
     DEPENDS ${SHADER_FILES}
 )
 
-add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared)
+add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared box2d unit_test testbed)
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/shaders/"
