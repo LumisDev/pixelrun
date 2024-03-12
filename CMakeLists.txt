@@ -33,12 +33,12 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
     list(APPEND SHADER_FILES ${DESTINATION})
 endforeach(GLSL)
 
+
 add_custom_target(
     CopyShaders 
     DEPENDS ${SHADER_FILES}
 )
 
-add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared box2d unit_test testbed lualib glm)
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/shaders/"
@@ -46,3 +46,36 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
         "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders"
         "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/shaders"
 )
+
+# Find Lua scripts
+file(GLOB_RECURSE LUA_SOURCE_FILES
+    "src/levels/*.lua"
+)
+
+# Copy Lua scripts
+foreach(LUA ${LUA_SOURCE_FILES})
+    get_filename_component(FILE_NAME ${LUA} NAME)
+    set(DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/levels/${FILE_NAME}")
+    add_custom_command(
+        OUTPUT ${DESTINATION}
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/levels/"
+        COMMAND ${CMAKE_COMMAND} -E copy ${LUA} ${DESTINATION}
+        DEPENDS ${LUA})
+    list(APPEND LUA_FILES ${DESTINATION})
+endforeach(LUA)
+
+# Custom target for copying Lua scripts
+add_custom_target(
+    CopyLuaScripts 
+    DEPENDS ${LUA_FILES}
+)
+
+# Post-build command to copy Lua scripts
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/levels/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/levels"
+        "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/levels"
+)
+
+add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared box2d unit_test testbed lualib glm CopyLuaScripts)
