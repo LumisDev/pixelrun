@@ -1,0 +1,61 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 23,
+      "patch": 0
+    },
+    "configurePresets": [
+      {
+        "name": "vs-build",
+        "displayName": "Visual Studio Build",
+        "description": "Build for Visual Studio",
+        "generator": "Visual Studio",
+        "binaryDir": "${sourceDir}/build/vs",
+        "condition":{
+            "type":"equals",
+            "lhs":"${hostSystemName}",
+            "rhs":"Win32"
+        }
+      },
+      {
+        "name": "unix-build",
+        "displayName": "Unix Build",
+        "description": "Build for Unix",
+        "generator": "Unix Makefiles",
+        "binaryDir": "${sourceDir}/build/linux"
+      },
+      {
+        "name": "mingw-build",
+        "displayName": "MinGW Build",
+        "description": "Build for MinGW",
+        "generator": "MinGW Makefiles",
+        "binaryDir": "${sourceDir}/build/mgw"
+      },
+      {
+        "name": "emscripten-build",
+        "displayName": "Emscripten Build",
+        "description": "Build for Emscripten",
+        "binaryDir": "${sourceDir}/build/wasm"
+      }
+    ],
+    "buildPresets": [
+      {
+        "name": "vs-build",
+        "configurePreset": "vs-build"
+      },
+      {
+        "name": "unix-build",
+        "configurePreset": "unix-build"
+      },
+      {
+        "name": "mingw-build",
+        "configurePreset": "mingw-build"
+      },
+      {
+        "name": "emscripten-build",
+        "configurePreset": "emscripten-build"
+      }
+    ]
+  }
+  
