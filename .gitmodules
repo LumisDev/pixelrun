@@ -10,6 +10,3 @@
 [submodule "extern/lua"]
 	path = extern/lua
 	url = https://github.com/LumisDev/lua-cmake.git
-[submodule "extern/sdl_img"]
-	path = extern/sdl_img
-	url = https://github.com/libsdl-org/SDL_image.git

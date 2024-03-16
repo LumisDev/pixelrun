@@ -11,10 +11,11 @@ set(GLM_ENABLE_LANG_EXTENSIONS ON)
 set(GLM_ENABLE_FAST_MATH ON)
 add_subdirectory(extern/lua)
 add_subdirectory(extern/glm)
+add_subdirectory(extern/sdl_img)
 
 add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c src/shader_binding.cpp src/main_menu.cpp)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include extern/box2d/include extern/lua/include extern/glm)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared box2d lualib glm)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include extern/box2d/include extern/lua/include extern/glm extern/sdl_img/include)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared box2d lualib glm SDL3_image)
 
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
@@ -78,4 +79,4 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
         "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/levels"
 )
 
-add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared box2d unit_test testbed lualib glm CopyLuaScripts)
+add_dependencies(${CMAKE_PROJECT_NAME} CopyShaders SDL3::SDL3-shared SDL3_image::SDL3_image box2d unit_test testbed lualib glm CopyLuaScripts)
