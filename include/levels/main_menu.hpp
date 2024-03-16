@@ -1,16 +1,15 @@
 // levels/main_menu.hpp
 #pragma once
 
-#include <levels/general.hpp>
 #include <SDL.h>
 #include <lua.hpp>
 
-class MainMenu : public Level {
+class MainMenu{
 public:
     MainMenu();
-    void setup() override;
-    void show() override;
-    void update(SDL_Event key) override;
+    void setup();
+    void show();
+    void update(SDL_Event key);
     ~MainMenu();
 private:
     lua_State* L;

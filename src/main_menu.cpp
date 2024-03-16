@@ -30,22 +30,22 @@ void MainMenu::update(SDL_Event key) {
 
 // Implement the C functions for each OpenGL function
 int MainMenu::lua_glUseProgram(lua_State* L) {
-    GLuint program = lua_tonumber(L, 1);
+    GLuint program = (GLuint)lua_tonumber(L, 1);
     glUseProgram(program);
     return 0;
 }
 
 int MainMenu::lua_glDrawArrays(lua_State* L) {
-    GLenum mode = lua_tonumber(L, 1);
-    GLint first = lua_tonumber(L, 2);
-    GLsizei count = lua_tonumber(L, 3);
+    GLenum mode = (GLenum)lua_tonumber(L, 1);
+    GLint first = (GLint)lua_tonumber(L, 2);
+    GLsizei count = (GLsizei)lua_tonumber(L, 3);
     glDrawArrays(mode, first, count);
     return 0;
 }
 
 int MainMenu::lua_glBindTexture(lua_State* L) {
-    GLenum target = lua_tonumber(L, 1);
-    GLuint texture = lua_tonumber(L, 2);
+    GLenum target = (GLenum)lua_tonumber(L, 1);
+    GLuint texture = (GLuint)lua_tonumber(L, 2);
     glBindTexture(target, texture);
     return 0;
 }
