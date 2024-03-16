@@ -1,14 +1,14 @@
+
 function setup()
 end
 
 function show()
 end
 
-function events()
-end
 
-function update()
-  events()
+
+function update(key)
+  
 end
 
 function hide()

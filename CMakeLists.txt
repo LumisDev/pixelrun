@@ -12,7 +12,7 @@ set(GLM_ENABLE_FAST_MATH ON)
 add_subdirectory(extern/lua)
 add_subdirectory(extern/glm)
 
-add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c src/shader_binding.cpp)
+add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/glad.c src/shader_binding.cpp src/main_menu.cpp)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include extern/sdl/include extern/box2d/include extern/lua/include extern/glm)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL3-shared box2d lualib glm)
 
